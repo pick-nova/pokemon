@@ -4,6 +4,12 @@ require 'database.php';
 $sql = "SELECT * FROM Cards";
 $result = mysqli_query($conn, $sql);
 
+require 'vendor/autoload.php';
+
+use Carbon\Carbon;
+
+printf("Now: %s", Carbon::now());
+
 ?>
 
 <!DOCTYPE html>
