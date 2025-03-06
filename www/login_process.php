@@ -25,7 +25,7 @@ if (empty($_POST['password'])) {
 $email = $_POST['email'];
 $password = $_POST['password'];
 
-$sql = "SELECT * FROM Customer WHERE email = '$email' ";
+$sql = "SELECT * FROM Customers WHERE email = '$email' ";
 $result = mysqli_query($conn, $sql);
 $user = mysqli_fetch_assoc($result);
 
@@ -40,9 +40,9 @@ if ($password != $user['password']) {
 }
 
 $_SESSION['email'] = $user['email'];
-$_SESSION['name'] = $user['firstname'];
-$_SESSION['password'] = $user['lastname'];
-$_SESSION['address'] = $user['role'];
+$_SESSION['name'] = $user['name'];
+$_SESSION['password'] = $user['password'];
+$_SESSION['address'] = $user['address'];
 $_SESSION['created_at'] = $user['created_at'];
 
 header("location: dashboard.php");

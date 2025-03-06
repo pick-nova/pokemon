@@ -17,13 +17,11 @@ require 'database.php';
 </head>
 <body>
     <h1>Welcome <?php echo $_SESSION['name']; ?></h1>
-    <h1><?php echo "Welkom ". $_SESSION['firstname']; ?></h1>
-    <h2><?php echo $_SESSION['role']; ?></h2>
+    <p>Your email is: <?php echo $_SESSION['email']; ?></p>
 
     <div class="nav-buttons">
-        <a href="login_homepage.php" class="button">Home</a>
+        <a href="index.php" class="button">Home</a>
         <a href="logout.php">Logout</a>
-        <a href="about_us.php">About us</a>
     </div>
 </body>
 </html>
