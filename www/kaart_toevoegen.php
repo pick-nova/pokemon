@@ -8,6 +8,9 @@ session_start();
 //     exit;
 // }
 
+$query = "SELECT * FROM types";
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $errors = [];
 
@@ -29,17 +32,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo "<p style='color:red;'>$error</p>";
         }
     } else {
-        $name = mysqli_real_escape_string($conn, $_POST['name']);
-        $type = mysqli_real_escape_string($conn, $_POST['type']);
-        $rarity = mysqli_real_escape_string($conn, $_POST['rarity']);
+        $name = $_POST['name'];
+        $type = $_POST['type'];
+        $rarity = $_POST['rarity'];
         $price = (float) $_POST['price'];
 
-        $sql = "INSERT INTO Cards (name, type, rarity, price) VALUES ('$name', '$type', '$rarity', $price)";
+        try {
+            $sql = "INSERT INTO Cards (name, type, rarity, price) VALUES (:name, :type, :rarity, :price)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':name', $name);
+            $stmt->bindParam(':type', $type);
+            $stmt->bindParam(':rarity', $rarity);
+            $stmt->bindParam(':price', $price);
 
-        if (mysqli_query($conn, $sql)) {
-            echo "<p style='color:green;'>Kaart succesvol toegevoegd!</p>";
-        } else {
-            echo "<p style='color:red;'>Fout bij toevoegen van kaart: " . mysqli_error($conn) . "</p>";
+            if ($stmt->execute()) {
+                echo "<p style='color:green;'>Kaart succesvol toegevoegd!</p>";
+            } else {
+                echo "<p style='color:red;'>Fout bij toevoegen van kaart.</p>";
+            }
+        } catch (PDOException $e) {
+            echo "<p style='color:red;'>Fout bij toevoegen van kaart: " . $e->getMessage() . "</p>";
         }
     }
 }
@@ -58,14 +70,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <label for="name">Naam:</label><br>
         <input type="text" id="name" name="name"><br><br>
 
-        <label for="type">Type:</label><br>
-        <input type="text" id="type" name="type"><br><br>
-
         <label for="rarity">Rarity:</label><br>
         <input type="text" id="rarity" name="rarity"><br><br>
 
         <label for="price">Prijs (€):</label><br>
         <input type="text" id="price" name="price"><br><br>
+
+        <div class="form-group flex">
+            <label for="type">Selecteer een Type pokemon:</label>
+            <select name="type" id="type">
+            <option value="normal">normal</option>
+            <option value="fire">fire</option>
+            <option value="water">water</option>
+            <option value="electric">electric</option>
+            <option value="grass">grass</option>
+            <option value="ice">ice</option>
+            <option value="fighting">fighting</option>
+            <option value="poison">poison</option>
+            <option value="ground">ground</option>
+            <option value="flying">flying</option>
+            <option value="psychic">psychic</option>
+            <option value="bug">bug</option>
+            <option value="rock">rock</option>
+            <option value="ghost">ghost</option>
+            <option value="dragon">dragon</option>
+            <option value="dark">dark</option>
+            <option value="steel">steel</option>
+            <option value="fairy">fairy</option>
+            </select>
+        </div>
 
         <button type="submit">Kaart Toevoegen</button>
     </form>
