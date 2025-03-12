@@ -1,24 +1,34 @@
 <?php
 require 'database.php';
 
-if (isset($_GET['id'])) {
-    $card_id = intval($_GET['id']);
+if (!isset($_GET['id'])) {
+    echo "<h2>Ongeldig verzoek!</h2>";
+    exit;
+}
 
-    $sql_card = "SELECT * FROM Cards WHERE card_id = $card_id";
-    $result_card = mysqli_query($conn, $sql_card);
+$card_id = intval($_GET['id']);
 
-    $sql_details = "SELECT * FROM Details WHERE card_id = $card_id";
-    $result_details = mysqli_query($conn, $sql_details);
-
-    if ($result_card && mysqli_num_rows($result_card) > 0) {
-        $card = mysqli_fetch_assoc($result_card);
-        $details = mysqli_fetch_assoc($result_details); 
-    } else {
+try {
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    
+    // Haal de kaartgegevens op
+    $sql_card = "SELECT * FROM Cards WHERE card_id = :card_id";
+    $stmt_card = $conn->prepare($sql_card);
+    $stmt_card->execute(['card_id' => $card_id]);
+    $card = $stmt_card->fetch(PDO::FETCH_ASSOC);
+    
+    // Haal de details op
+    $sql_details = "SELECT * FROM Details WHERE card_id = :card_id";
+    $stmt_details = $conn->prepare($sql_details);
+    $stmt_details->execute(['card_id' => $card_id]);
+    $details = $stmt_details->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$card) {
         echo "<h2>Kaart niet gevonden!</h2>";
         exit;
     }
-} else {
-    echo "<h2>Ongeldig verzoek!</h2>";
+} catch (PDOException $e) {
+    echo "<h2>Databasefout: " . ($e->getMessage()) . "</h2>";
     exit;
 }
 ?>
@@ -48,10 +58,9 @@ if (isset($_GET['id'])) {
                 <p class="text-gray-600 mb-2">Rarity: <?php echo($card['rarity']); ?></p>
                 <p class="text-gray-800 font-semibold mb-2">Prijs: €<?php echo number_format($card['price'], 2); ?></p>
                 <p class="text-gray-600 mb-4">
-                    Beschrijving: <?php echo isset($card['description']) && $card['description'] !== null ? nl2br(htmlspecialchars($card['description'])) : 'Geen beschrijving beschikbaar.'; ?>
+                    Beschrijving: <?php echo isset($card['description']) && $card['description'] !== null ? ($card['description']) : 'Geen beschrijving beschikbaar.'; ?>
                 </p>
 
-                <!-- Extra details weergeven als ze beschikbaar zijn -->
                 <?php if ($details): ?>
                     <div class="mt-4">
                         <p class="text-gray-600 mb-2">HP: <?php echo($details['hp'] ?? 'N/A'); ?></p>
@@ -73,4 +82,7 @@ if (isset($_GET['id'])) {
     </div>
 
     <footer class="bg-gray-800 text-white text-center py-4 mt-8">
-        &copy;
+        &copy; 2025 Pokémon Verzameling
+    </footer>
+</body>
+</html>

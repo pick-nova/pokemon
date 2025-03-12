@@ -50,6 +50,9 @@ $cards = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                     <a href="details_kaart.php?id=<?php echo $card['card_id']; ?>" class="text-blue-500 hover:text-blue-700">
                      <button class="bg-blue-500 text-white px-4 py-2 rounded">Bekijk Details</button>
+                     <a href="edit_kaart.php?id=<?php echo $card['card_id']; ?>" class="text-blue-500 hover:text-blue-700">
+                     <button class="bg-blue-500 text-white px-4 py-2 rounded">edit</button>
+                    </a>
                     </a>
 
                 </div>

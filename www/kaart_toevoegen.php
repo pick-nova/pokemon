@@ -8,7 +8,14 @@ session_start();
 //     exit;
 // }
 
-$query = "SELECT * FROM types";
+
+$stmt = $conn->prepare("SELECT * FROM types");
+$stmt->execute();
+$types = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$stmt = $conn->prepare("SELECT * FROM rarities");
+$stmt->execute();
+$rarities = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -69,34 +76,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <form method="POST" action="kaart_toevoegen.php">
         <label for="name">Naam:</label><br>
         <input type="text" id="name" name="name"><br><br>
-
+    <div>
         <label for="rarity">Rarity:</label><br>
-        <input type="text" id="rarity" name="rarity"><br><br>
-
+        <select name="rarity" id="rarity">
+            <?php foreach ($rarities as $rarity): ?>
+                <option value="<?php echo $rarity['id']; ?>"><?php echo $rarity['name']; ?></option>
+            <?php endforeach; ?>
+        </select>
+    </div>
         <label for="price">Prijs (€):</label><br>
         <input type="text" id="price" name="price"><br><br>
 
         <div class="form-group flex">
             <label for="type">Selecteer een Type pokemon:</label>
             <select name="type" id="type">
-            <option value="normal">normal</option>
-            <option value="fire">fire</option>
-            <option value="water">water</option>
-            <option value="electric">electric</option>
-            <option value="grass">grass</option>
-            <option value="ice">ice</option>
-            <option value="fighting">fighting</option>
-            <option value="poison">poison</option>
-            <option value="ground">ground</option>
-            <option value="flying">flying</option>
-            <option value="psychic">psychic</option>
-            <option value="bug">bug</option>
-            <option value="rock">rock</option>
-            <option value="ghost">ghost</option>
-            <option value="dragon">dragon</option>
-            <option value="dark">dark</option>
-            <option value="steel">steel</option>
-            <option value="fairy">fairy</option>
+                <?php foreach ($types as $type): ?>
+                    <option value="<?php echo $type['id']; ?>"><?php echo $type['name']; ?></option>
+                <?php endforeach; ?> 
             </select>
         </div>
 
